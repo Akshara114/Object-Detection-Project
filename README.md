@@ -31,35 +31,35 @@ It is built using YOLO and OpenCV for computer vision-based detection.
 ---
 
 project/
-├── app.py # Main Flask application
-├── init_db.py # Database setup script
-├── generate_sound.py # Optional alert sound generator
+├── app.py                      # Main Flask application
+├── init_db.py                 # Database setup script
+├── generate_sound.py          # Optional alert sound generator
 ├── requirements.txt
-├── database.db # SQLite database (auto-created)
+├── database.db                # SQLite database (auto-created)
 │
 ├── models/
-│ └── yolov8n.pt # YOLO model weights
+│   └── yolov8n.pt            # YOLO model weights
 │
 ├── uploads/
-│ ├── images/ # Uploaded images
-│ └── videos/ # Uploaded videos
+│   ├── images/               # Uploaded images
+│   └── videos/               # Uploaded videos
 │
 ├── outputs/
-│ ├── images/ # Processed images
-│ └── videos/ # Processed videos
+│   ├── images/               # Processed images
+│   └── videos/               # Processed videos
 │
 ├── static/
-│ ├── css/
-│ ├── js/
-│ └── sounds/
+│   ├── css/
+│   ├── js/
+│   └── sounds/
 │
 └── templates/
-├── base.html
-├── login.html
-├── register.html
-├── forgot_password.html
-├── dashboard.html
-└── reports.html
+    ├── base.html
+    ├── login.html
+    ├── register.html
+    ├── forgot_password.html
+    ├── dashboard.html
+    └── reports.html
 
 
 ---
