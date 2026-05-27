@@ -1,151 +1,101 @@
-<<<<<<< HEAD
-# SentinelAI — Vision-Based Object Detection & Intelligent Alert System
+# Object Detection Project
 
-> **Stack:** Python · Flask · YOLOv8 · OpenCV · SQLite · HTML/CSS/JS
+This project detects objects in images, videos, and live webcam streams.  
+It draws bounding boxes around detected objects and shows their labels with confidence scores in real time.
 
----
-
-## Project Structure
-
-```
-sentinelai/
-├── app.py                  ← Flask application (all routes + logic)
-├── init_db.py              ← Standalone DB setup script
-├── generate_sound.py       ← Generates alert beep (optional)
-├── requirements.txt
-├── sentinelai.db           ← SQLite database (auto-created)
-│
-├── models/
-│   └── yolov8n.pt          ← Downloaded automatically on first run
-│
-├── uploads/
-│   ├── images/             ← Uploaded source images
-│   └── videos/             ← Uploaded source videos
-│
-├── outputs/
-│   ├── images/             ← Processed images with bounding boxes
-│   └── videos/             ← Processed videos with bounding boxes
-│
-├── static/
-│   ├── css/style.css
-│   ├── js/
-│   │   ├── main.js
-│   │   └── dashboard.js
-│   └── sounds/alert.mp3    ← (optional) alert beep
-│
-└── templates/
-    ├── base.html
-    ├── login.html
-    ├── register.html
-    ├── forgot_password.html
-    ├── dashboard.html
-    └── reports.html
-```
-
----
-
-## Quick Start
-
-### 1. Clone / unzip the project
-```bash
-cd sentinelai
-```
-
-### 2. Create a virtual environment
-```bash
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# macOS / Linux
-source venv/bin/activate
-```
-
-### 3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-> **Note:** `ultralytics` will download **yolov8n.pt** (~6 MB) automatically on first detection run if it is not present in `models/`.
-
-### 4. (Optional) Generate alert sound
-```bash
-python generate_sound.py
-# Then convert to MP3:
-ffmpeg -i static/sounds/alert.wav static/sounds/alert.mp3
-```
-
-### 5. Run the application
-```bash
-python app.py
-```
-
-Open your browser at **http://localhost:5000**
+It is built using YOLO and OpenCV for computer vision-based detection.
 
 ---
 
 ## Features
 
-| Feature | Details |
-|---|---|
-| **Authentication** | Register / Login / Forgot Password with bcrypt-style hashing |
-| **Image Detection** | Upload PNG/JPG/BMP/WEBP → YOLOv8 inference → bounding-box overlay |
-| **Video Detection** | Upload MP4/AVI/MOV → frame-by-frame detection → annotated video output |
-| **Webcam Detection** | Live camera → capture frame → instant detection |
-| **Alert System** | Triggers on `person`, `knife`, `gun`, `fire`, `scissors`, `cell phone` (configurable) |
-| **Reports** | Full detection history, filterable by object or date, JSON export |
-| **Session Security** | Session-based auth with `@login_required` decorator |
-| **Responsive UI** | Works on desktop and mobile |
+- Detects objects in images
+- Processes videos frame by frame
+- Real-time webcam detection
+- Displays bounding boxes with labels and confidence scores
+- Supports multiple object categories
+- Stores detection history
+- Simple and responsive web interface
 
 ---
 
-## Customising Alert Classes
+## Tech Stack
 
-Edit `ALERT_CLASSES` in `app.py`:
-
-```python
-ALERT_CLASSES = {'person', 'knife', 'gun', 'fire', 'scissors', 'cell phone'}
-```
-
-You can use any COCO class name (80 classes). Full list: https://docs.ultralytics.com/datasets/detect/coco/
-
----
-
-## Switching YOLO Model
-
-| Model | Speed | Accuracy | Size |
-|---|---|---|---|
-| `yolov8n.pt` | Fastest | Lower | 6 MB |
-| `yolov8s.pt` | Fast | Good | 22 MB |
-| `yolov8m.pt` | Medium | Better | 50 MB |
-| `yolov8l.pt` | Slow | High | 84 MB |
-| `yolov8x.pt` | Slowest | Highest | 131 MB |
-
-Change the model in `app.py → get_model()`:
-```python
-_yolo_model = YOLO('yolov8s.pt')  # or full path
-```
+- Python  
+- Flask  
+- YOLOv8 (Ultralytics)  
+- OpenCV  
+- SQLite  
+- HTML, CSS, JavaScript  
 
 ---
 
-## Environment Notes
+project/
+├── app.py # Main Flask application
+├── init_db.py # Database setup script
+├── generate_sound.py # Optional alert sound generator
+├── requirements.txt
+├── database.db # SQLite database (auto-created)
+│
+├── models/
+│ └── yolov8n.pt # YOLO model weights
+│
+├── uploads/
+│ ├── images/ # Uploaded images
+│ └── videos/ # Uploaded videos
+│
+├── outputs/
+│ ├── images/ # Processed images
+│ └── videos/ # Processed videos
+│
+├── static/
+│ ├── css/
+│ ├── js/
+│ └── sounds/
+│
+└── templates/
+├── base.html
+├── login.html
+├── register.html
+├── forgot_password.html
+├── dashboard.html
+└── reports.html
 
-- **Python 3.9+** required
-- Works on Windows, macOS, Linux
-- GPU (CUDA) is auto-detected by Ultralytics for faster inference
-- CPU-only inference is supported (slower for video)
 
 ---
 
-## Security Notes
+## How to Run
 
-- Passwords are salted + SHA-256 hashed (replace with `bcrypt` for production)
-- Uploaded files are sanitised with `werkzeug.secure_filename`
-- Sessions use a random 32-byte secret key
-- File size limit: 100 MB
-- Only authenticated users can access detection & reports routes
-=======
-# Object-Detection-Project
-A deep learning–based Object Detection project that can identify and locate multiple objects in images, videos, and real-time webcam streams. The system uses Computer Vision and models like YOLO with OpenCV to draw bounding boxes around detected objects and display their labels with confidence scores.
->>>>>>> dab6f321dfb805326267e4eccd804d00e26932b7
+### 1. Clone or open the project folder
+```bash
+cd project
+2. Create virtual environment
+python -m venv venv
+
+# Activate on Windows
+venv\Scripts\activate
+
+# Activate on macOS/Linux
+source venv/bin/activate
+3. Install dependencies
+pip install -r requirements.txt
+4. Run the application
+python app.py
+5. Open in browser
+http://localhost:5000
+YOLO Models
+
+You can switch models in the code depending on accuracy vs speed:
+
+yolov8n.pt → fastest, light weight
+yolov8s.pt → balanced
+yolov8m.pt → better accuracy
+yolov8l.pt → high accuracy
+yolov8x.pt → best accuracy
+**Requirements**
+Python 3.9 or higher
+Works on Windows, macOS, Linux
+CPU supported (GPU recommended for faster video processing)
+First run may download YOLO weights automatically
+
+## Project Structure
