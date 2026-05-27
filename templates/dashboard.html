@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · SentinelAI{% endblock %}
+
+{% block content %}
+<!-- ── Stats row ── -->
+<section class="stats-row">
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--blue">⬡</div>
+    <div class="stat-body">
+      <span class="stat-value">{{ stats.total or 0 }}</span>
+      <span class="stat-label">Total Detections</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--red">⚠</div>
+    <div class="stat-body">
+      <span class="stat-value">{{ stats.alerts or 0 }}</span>
+      <span class="stat-label">Alerts Triggered</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--green">◉</div>
+    <div class="stat-body">
+      <span class="stat-value">{{ stats.unique_objects or 0 }}</span>
+      <span class="stat-label">Object Classes</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Mode Tabs ── -->
+<section class="detection-section">
+  <div class="section-header">
+    <h2>Detection Console</h2>
+    <p>Upload or capture media to run object detection</p>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="image">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Image
+    </button>
+    <button class="mode-tab" data-mode="video">
+      <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      Video
+    </button>
+    <button class="mode-tab" data-mode="webcam">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Webcam
+    </button>
+  </div>
+
+  <!-- Image Panel -->
+  <div id="panel-image" class="detection-panel active">
+    <div class="upload-zone" id="imageDropZone">
+      <input type="file" id="imageFile" accept="image/*" hidden />
+      <div class="upload-content">
+        <div class="upload-icon">🖼</div>
+        <p>Drag &amp; drop an image here, or</p>
+        <button type="button" class="btn-outline" onclick="document.getElementById('imageFile').click()">Browse Files</button>
+        <p class="upload-hint">Supports: PNG, JPG, JPEG, BMP, WEBP</p>
+      </div>
+    </div>
+
+    <div id="imagePreviewWrap" class="preview-wrap hidden">
+      <div class="preview-split">
+        <div class="preview-box">
+          <h4>Original</h4>
+          <img id="imagePreview" src="" alt="Preview" />
+        </div>
+        <div class="preview-box" id="imageOutputBox" style="display:none">
+          <h4>Detected</h4>
+          <img id="imageOutput" src="" alt="Output" />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="detectImageBtn">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Run Detection
+        </button>
+        <button class="btn-ghost" id="clearImageBtn">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Panel -->
+  <div id="panel-video" class="detection-panel">
+    <div class="upload-zone" id="videoDropZone">
+      <input type="file" id="videoFile" accept="video/*" hidden />
+      <div class="upload-content">
+        <div class="upload-icon">🎬</div>
+        <p>Drag &amp; drop a video here, or</p>
+        <button type="button" class="btn-outline" onclick="document.getElementById('videoFile').click()">Browse Files</button>
+        <p class="upload-hint">Supports: MP4, AVI, MOV, MKV, WEBM · Max 100 MB</p>
+      </div>
+    </div>
+
+    <div id="videoPreviewWrap" class="preview-wrap hidden">
+      <div class="preview-split">
+        <div class="preview-box">
+          <h4>Original</h4>
+          <video id="videoPreview" controls></video>
+        </div>
+        <div class="preview-box" id="videoOutputBox" style="display:none">
+          <h4>Detected</h4>
+          <video id="videoOutput" controls></video>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="detectVideoBtn">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Run Detection
+        </button>
+        <button class="btn-ghost" id="clearVideoBtn">Clear</button>
+      </div>
+      <div id="videoProgress" class="progress-bar hidden">
+        <div class="progress-fill" id="videoProgressFill"></div>
+        <span id="videoProgressLabel">Processing…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Webcam Panel -->
+  <div id="panel-webcam" class="detection-panel">
+    <div class="webcam-area">
+      <video id="webcamFeed" autoplay playsinline></video>
+      <canvas id="webcamCanvas" hidden></canvas>
+      <div class="webcam-overlay" id="webcamPlaceholder">
+        <div class="upload-icon">📷</div>
+        <p>Camera not started</p>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:1.2rem">
+      <button class="btn-primary" id="startCamBtn">Start Camera</button>
+      <button class="btn-primary btn--accent" id="captureBtn" disabled>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+        Capture &amp; Detect
+      </button>
+      <button class="btn-ghost" id="stopCamBtn" disabled>Stop</button>
+    </div>
+    <div id="webcamOutputBox" class="preview-box hidden" style="margin-top:1rem">
+      <h4>Detection Result</h4>
+      <img id="webcamOutput" src="" alt="Webcam output" />
+    </div>
+  </div>
+</section>
+
+<!-- ── Results Panel ── -->
+<section class="results-section hidden" id="resultsSection">
+  <div class="section-header">
+    <h2>Detection Results</h2>
+    <span id="resultCount" class="badge"></span>
+  </div>
+
+  <!-- Alert banner -->
+  <div id="alertBanner" class="alert-banner hidden">
+    <span class="alert-pulse"></span>
+    <strong>⚠ ALERT:</strong> <span id="alertMessage"></span>
+  </div>
+
+  <div id="resultsGrid" class="results-grid"></div>
+</section>
+
+<!-- ── Loading Overlay ── -->
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="spinner-ring"></div>
+  <p id="loadingText">Running detection…</p>
+</div>
+
+<!-- Alert sound (silent fallback) -->
+<audio id="alertSound" src="{{ url_for('static', filename='sounds/alert.mp3') }}" preload="auto"></audio>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

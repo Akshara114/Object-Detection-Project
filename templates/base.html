@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}SentinelAI{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Animated background grid -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  {% if session.user_id %}
+  <!-- ── Navigation ── -->
+  <nav class="navbar">
+    <a class="nav-brand" href="{{ url_for('dashboard') }}">
+      <span class="brand-icon">⬡</span>
+      <span>Sentinel<em>AI</em></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('dashboard') }}" class="{% if request.endpoint=='dashboard' %}active{% endif %}">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Dashboard
+      </a></li>
+      <li><a href="{{ url_for('reports') }}" class="{% if request.endpoint=='reports' %}active{% endif %}">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Reports
+      </a></li>
+    </ul>
+    <div class="nav-user">
+      <span class="user-badge">{{ session.username[0]|upper }}</span>
+      <span class="user-name">{{ session.username }}</span>
+      <a href="{{ url_for('logout') }}" class="btn-logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </a>
+    </div>
+  </nav>
+  {% endif %}
+
+  <!-- ── Flash Messages ── -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+      <div class="flash flash--{{ category }}">
+        <span>{{ message }}</span>
+        <button onclick="this.parentElement.remove()">✕</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ── Page Content ── -->
+  <main class="main-content {% if not session.user_id %}main-auth{% endif %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

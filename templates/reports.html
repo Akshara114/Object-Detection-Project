@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Reports · SentinelAI{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <h1>Detection Reports</h1>
+  <p>Full history of all objects detected in your sessions</p>
+</section>
+
+<!-- ── Filter bar ── -->
+<div class="filter-bar">
+  <form method="GET" action="{{ url_for('reports') }}" class="filter-form">
+    <div class="filter-group">
+      <label>Filter by Object</label>
+      <select name="object" id="objectFilter">
+        <option value="">All Objects</option>
+        {% for obj in objects %}
+        <option value="{{ obj }}" {% if obj==obj_filter %}selected{% endif %}>{{ obj }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Filter by Date</label>
+      <input type="date" name="date" value="{{ date_filter }}" />
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn-primary">Apply</button>
+      <a href="{{ url_for('reports') }}" class="btn-ghost">Reset</a>
+    </div>
+  </form>
+  <a href="{{ url_for('export_reports') }}" class="btn-outline">
+    <svg viewBox="0 0 24 24" style="width:16px;height:16px;vertical-align:middle"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Export JSON
+  </a>
+</div>
+
+<!-- ── Table ── -->
+{% if detections %}
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Object</th>
+        <th>Confidence</th>
+        <th>File</th>
+        <th>Type</th>
+        <th>Alert</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in detections %}
+      <tr class="{% if d.is_alert %}row--alert{% endif %}">
+        <td class="td-id">{{ d.id }}</td>
+        <td>
+          <span class="obj-pill {% if d.is_alert %}obj-pill--alert{% endif %}">
+            {{ d.object_name }}
+          </span>
+        </td>
+        <td>
+          <div class="conf-bar-wrap">
+            <div class="conf-bar" style="width:{{ (d.confidence*100)|round }}%"></div>
+            <span>{{ '%.1f'|format(d.confidence*100) }}%</span>
+          </div>
+        </td>
+        <td class="td-file">{{ d.filename }}</td>
+        <td><span class="type-badge">{{ d.file_type }}</span></td>
+        <td>
+          {% if d.is_alert %}
+            <span class="alert-tag">⚠ YES</span>
+          {% else %}
+            <span class="safe-tag">✓ No</span>
+          {% endif %}
+        </td>
+        <td class="td-ts">{{ d.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="result-count">Showing <strong>{{ detections|length }}</strong> record(s)</p>
+
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">🔍</div>
+  <h3>No detections found</h3>
+  <p>{% if obj_filter or date_filter %}Try adjusting your filters.{% else %}Run your first detection from the <a href="{{ url_for('dashboard') }}">Dashboard</a>.{% endif %}</p>
+</div>
+{% endif %}
+{% endblock %}
