@@ -27,41 +27,6 @@ It is built using YOLO and OpenCV for computer vision-based detection.
 - OpenCV  
 - SQLite  
 - HTML, CSS, JavaScript  
-
----
-
-project/
-├── app.py                      # Main Flask application
-├── init_db.py                 # Database setup script
-├── generate_sound.py          # Optional alert sound generator
-├── requirements.txt
-├── database.db                # SQLite database (auto-created)
-│
-├── models/
-│   └── yolov8n.pt            # YOLO model weights
-│
-├── uploads/
-│   ├── images/               # Uploaded images
-│   └── videos/               # Uploaded videos
-│
-├── outputs/
-│   ├── images/               # Processed images
-│   └── videos/               # Processed videos
-│
-├── static/
-│   ├── css/
-│   ├── js/
-│   └── sounds/
-│
-└── templates/
-    ├── base.html
-    ├── login.html
-    ├── register.html
-    ├── forgot_password.html
-    ├── dashboard.html
-    └── reports.html
-
-
 ---
 
 ## How to Run
@@ -69,7 +34,7 @@ project/
 ### 1. Clone or open the project folder
 ```bash
 cd project
-2. Create virtual environment
+**2. Create virtual environment**
 python -m venv venv
 
 # Activate on Windows
@@ -77,11 +42,11 @@ venv\Scripts\activate
 
 # Activate on macOS/Linux
 source venv/bin/activate
-3. Install dependencies
+**3. Install dependencies**
 pip install -r requirements.txt
-4. Run the application
+**4. Run the application**
 python app.py
-5. Open in browser
+**5. Open in browser**
 http://localhost:5000
 YOLO Models
 
